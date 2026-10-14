@@ -26,7 +26,11 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
 
 def create_app() -> FastAPI:
     """Собирает приложение, обработчики ошибок и роутеры."""
-    app = FastAPI(lifespan=lifespan)
+    app = FastAPI(
+        title="API платежей",
+        description="Приём оплаты курса: тарифы, платежи, статусы и вебхук банка.",
+        lifespan=lifespan,
+    )
     register_error_handlers(app)
     app.include_router(tariffs_router)
     app.include_router(payments_router)
