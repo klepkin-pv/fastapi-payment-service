@@ -1,0 +1,50 @@
+services:
+  db:
+    image: postgres:18-alpine
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-payments}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-payments}
+      POSTGRES_DB: ${POSTGRES_DB:-payments}
+    volumes:
+      - postgres-data:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+  migrations:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    command: bash docker/migrate.sh
+    environment:
+      DATABASE_URL: postgresql+psycopg://${POSTGRES_USER:-payments}:${POSTGRES_PASSWORD:-payments}@db:5432/${POSTGRES_DB:-payments}
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: "no"
+
+  api:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    command: bash docker/entrypoint.sh
+    depends_on:
+      migrations:
+        condition: service_completed_successfully
+    ports:
+      - "8000:8000"
+    environment:
+      DATABASE_URL: postgresql+psycopg://${POSTGRES_USER:-payments}:${POSTGRES_PASSWORD:-payments}@db:5432/${POSTGRES_DB:-payments}
+      WEBHOOK_SECRET: ${WEBHOOK_SECRET:-dev-secret}
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request;urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+volumes:
+  postgres-data:
