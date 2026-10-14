@@ -21,13 +21,15 @@ docker compose --env-file .env -f docker/docker-compose.prod.yml up --build
 Нужны Python 3.14, [uv](https://docs.astral.sh/uv/) и PostgreSQL.
 
 ```bash
-cp .env.example .env    # при необходимости поправьте DATABASE_URL
-createdb payments       # один раз, если базы ещё нет
-./local.run.ps1         # Windows; ./local.run.sh — Linux и macOS
+cp .env.example .env            # при необходимости поправьте DATABASE_URL
+createdb -U postgres payments   # один раз, если базы ещё нет
+./local.run.ps1                 # Windows; ./local.run.sh — Linux и macOS
 ```
 
 Скрипт накатывает миграции и поднимает сервер на http://localhost:8000.
-Базу можно создать любым клиентом PostgreSQL: `createdb`, `psql -c "CREATE DATABASE payments"`, pgAdmin.
+Базу можно создать любым клиентом PostgreSQL: `createdb`, `psql -c "CREATE DATABASE payments"`, pgAdmin —
+пользователь и пароль те же, что в `DATABASE_URL` (по умолчанию `postgres`).
+Windows: если PowerShell блокирует скрипт, запусти `powershell -ExecutionPolicy Bypass -File .\local.run.ps1`.
 
 ## Тесты
 

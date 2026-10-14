@@ -41,7 +41,7 @@
 
 **Локальный запуск:**
 - Контейнеры: `docker compose -f docker/docker-compose.prod.yml up --build` (db → migrations → api; свои настройки — `--env-file .env`)
-- Без Docker: `cp .env.example .env`, `createdb payments`, `./local.run.ps1` (или `./local.run.sh`) — скрипт накатывает миграции и поднимает uvicorn
+- Без Docker: `cp .env.example .env`, `createdb -U postgres payments`, `./local.run.ps1` (или `./local.run.sh`) — скрипт накатывает миграции и поднимает uvicorn
 
 **Отличия от Docker:** тесты идут на SQLite in-memory вместо PostgreSQL — внешние сервисы не нужны ни локально, ни в CI; отличается только фикстура тестов и дефолт `DATABASE_URL` при запуске без `.env`. Бизнес-логика, запросы и миграции общие
 
