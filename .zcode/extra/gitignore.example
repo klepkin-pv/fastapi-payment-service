@@ -1,0 +1,50 @@
+# Состояние и кэш агентов
+.zcode/state/
+.zcode/cache/
+# .zcode/agents/ и .zcode/skills/ НЕ игнорируются — они лежат в репозитории
+
+# Планы и спецификации (раскомментируй, если не хочешь держать их в истории)
+# .plans/
+
+# Настройки клиента с токенами и ключами
+.zcode/config.json
+
+# Node
+node_modules/
+.pnp
+.pnp.js
+
+# Сборка
+dist/
+build/
+.next/
+out/
+
+# Окружение и секреты
+.env
+.env.*
+!.env.example
+
+# Сгенерированное
+graphify-out/
+figma-data/
+coverage/
+.nyc_output/
+*.log
+npm-debug.log*
+
+# Локальные данные и БД
+*.sqlite
+*.sqlite3
+*.db
+docker/volumes/
+
+# ОС
+.DS_Store
+Thumbs.db
+
+# Редакторы
+.vscode/
+.idea/
+*.swp
+*.swo
