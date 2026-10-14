@@ -16,7 +16,15 @@ from app.webhooks.signature import InvalidSignatureError, verify_signature
 router = APIRouter()
 
 
-@router.post("/webhooks/bank")
+@router.post(
+    "/webhooks/bank",
+    openapi_extra={
+        "requestBody": {
+            "required": True,
+            "content": {"application/json": {"schema": PaymentStatusChange.model_json_schema()}},
+        }
+    },
+)
 async def bank_webhook(
     request: Request,
     session: Annotated[Session, Depends(get_session)],
