@@ -61,19 +61,22 @@ curl -s -X POST http://localhost:8000/webhooks/bank \
 
 ### PowerShell
 
-В PowerShell `curl` — алиас `Invoke-WebRequest`, поэтому вызывается `curl.exe`; синтаксис тот же, отличается только вычисление подписи.
+В Windows PowerShell `curl` — это алиас `Invoke-WebRequest` с другим синтаксисом, а `curl.exe` теряет кавычки при передаче тела с JSON, поэтому запросы отправляются через `Invoke-RestMethod`.
 
 ```powershell
-curl.exe -s http://localhost:8000/tariffs
+Invoke-RestMethod http://localhost:8000/tariffs
 
-curl.exe -s -X POST http://localhost:8000/payments -H 'Content-Type: application/json' -H 'Idempotency-Key: demo-1' -d '{"tariff_id": 2, "email": "student@example.com", "method": "installment", "installment_months": 3, "promo_code": "KVITTO10"}'
+Invoke-RestMethod -Uri http://localhost:8000/payments -Method Post -ContentType 'application/json' -Headers @{ 'Idempotency-Key' = 'demo-1' } -Body '{"tariff_id": 2, "email": "student@example.com", "method": "installment", "installment_months": 3, "promo_code": "KVITTO10"}'
 
 $body = '{"payment_id": 1, "status": "succeeded"}'
 $key = [Text.Encoding]::UTF8.GetBytes('dev-secret')
 $data = [Text.Encoding]::UTF8.GetBytes($body)
 $sig = [BitConverter]::ToString([Security.Cryptography.HMACSHA256]::new($key).ComputeHash($data)).Replace('-', '').ToLower()
-curl.exe -s -X POST http://localhost:8000/webhooks/bank -H 'Content-Type: application/json' -H "X-Signature: $sig" -d $body
+Invoke-RestMethod -Uri http://localhost:8000/webhooks/bank -Method Post -ContentType 'application/json' -Headers @{ 'X-Signature' = $sig } -Body $body
 ```
+
+Ошибки (401, 409, 422) `Invoke-RestMethod` показывает как исключение с кодом — это ожидаемо.
+Примеры из блока Bash работают без изменений в Git Bash.
 
 ### Тела для Swagger
 
