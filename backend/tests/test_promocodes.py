@@ -13,19 +13,19 @@ def test_without_promo_code_keeps_price() -> None:
     assert apply_promo(1990000, None) == (1990000, 0)
 
 
-def test_study10_uppercase() -> None:
-    """STUDY10: standard дешевеет на 199000 копеек (ТЗ #1)."""
-    assert apply_promo(1990000, "STUDY10") == (1791000, 199000)
+def test_kvitto10_uppercase() -> None:
+    """KVITTO10: standard дешевеет на 199000 копеек (ТЗ #1)."""
+    assert apply_promo(1990000, "KVITTO10") == (1791000, 199000)
 
 
-def test_study10_mixed_case() -> None:
-    """Промокод регистронезависим: sTuDy10 даёт ту же скидку."""
-    assert apply_promo(1990000, "sTuDy10") == (1791000, 199000)
+def test_kvitto10_mixed_case() -> None:
+    """Промокод регистронезависим: kvitTo10 даёт ту же скидку."""
+    assert apply_promo(1990000, "kvitTo10") == (1791000, 199000)
 
 
-def test_study10_lowercase_for_basic() -> None:
-    """study10 в нижнем регистре: скидка 10 % от цены Basic."""
-    assert apply_promo(990000, "study10") == (891000, 99000)
+def test_kvitto10_lowercase_for_basic() -> None:
+    """kvitto10 в нижнем регистре: скидка 10 % от цены Basic."""
+    assert apply_promo(990000, "kvitto10") == (891000, 99000)
 
 
 def test_unknown_promo_code_raises() -> None:
@@ -48,8 +48,8 @@ def _payment_payload(**fields: object) -> dict[str, object]:
 def test_create_with_promo_code_discounts_response_and_db(
     client: TestClient, session: Session
 ) -> None:
-    """STUDY10: amount и discount из ТЗ #1 — и в ответе, и в базе."""
-    response = client.post("/payments", json=_payment_payload(promo_code="STUDY10"))
+    """KVITTO10: amount и discount из ТЗ #1 — и в ответе, и в базе."""
+    response = client.post("/payments", json=_payment_payload(promo_code="KVITTO10"))
 
     assert response.status_code == 201
     body = response.json()
@@ -79,7 +79,7 @@ def test_create_with_lowercase_promo_code_discounts_same(
     client: TestClient, session: Session
 ) -> None:
     """Промокод в нижнем регистре даёт ту же скидку, что и в верхнем (ТЗ #1)."""
-    response = client.post("/payments", json=_payment_payload(promo_code="sTuDy10"))
+    response = client.post("/payments", json=_payment_payload(promo_code="kvitTo10"))
 
     assert response.status_code == 201
     body = response.json()

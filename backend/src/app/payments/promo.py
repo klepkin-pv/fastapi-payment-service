@@ -1,6 +1,6 @@
 """Промокоды: расчёт скидки к цене тарифа."""
 
-PROMO_DISCOUNTS = {"STUDY10": 10}
+PROMO_DISCOUNTS = {"KVITTO10": 10}
 
 
 class UnknownPromoCodeError(Exception):

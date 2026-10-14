@@ -43,7 +43,7 @@ def test_full_payment_flow(client: TestClient, session: Session) -> None:
         "email": "student@example.com",
         "method": "installment",
         "installment_months": 6,
-        "promo_code": "STUDY10",
+        "promo_code": "KVITTO10",
     }
     created = client.post("/payments", json=payload, headers={"Idempotency-Key": "e2e-1"})
 

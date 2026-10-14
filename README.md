@@ -42,7 +42,7 @@ curl -s http://localhost:8000/tariffs
 
 curl -s -X POST http://localhost:8000/payments \
   -H 'Content-Type: application/json' -H 'Idempotency-Key: demo-1' \
-  -d '{"tariff_id": 2, "email": "student@example.com", "method": "installment", "installment_months": 3, "promo_code": "STUDY10"}'
+  -d '{"tariff_id": 2, "email": "student@example.com", "method": "installment", "installment_months": 3, "promo_code": "KVITTO10"}'
 
 curl -s http://localhost:8000/payments/1
 curl -s "http://localhost:8000/payments?status=pending&email=student@example.com"
