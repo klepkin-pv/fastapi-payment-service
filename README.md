@@ -39,6 +39,10 @@ cd backend && uv run pytest
 
 ## Примеры запросов
 
+Swagger UI — http://localhost:8000/docs.
+
+### Bash
+
 ```bash
 curl -s http://localhost:8000/tariffs
 
@@ -53,6 +57,45 @@ BODY='{"payment_id": 1, "status": "succeeded"}'
 SIG=$(printf '%s' "$BODY" | python -c "import sys,hmac,hashlib;print(hmac.new(b'dev-secret',sys.stdin.buffer.read(),hashlib.sha256).hexdigest())")
 curl -s -X POST http://localhost:8000/webhooks/bank \
   -H 'Content-Type: application/json' -H "X-Signature: $SIG" -d "$BODY"
+```
+
+### PowerShell
+
+В PowerShell `curl` — алиас `Invoke-WebRequest`, поэтому вызывается `curl.exe`; синтаксис тот же, отличается только вычисление подписи.
+
+```powershell
+curl.exe -s http://localhost:8000/tariffs
+
+curl.exe -s -X POST http://localhost:8000/payments -H 'Content-Type: application/json' -H 'Idempotency-Key: demo-1' -d '{"tariff_id": 2, "email": "student@example.com", "method": "installment", "installment_months": 3, "promo_code": "KVITTO10"}'
+
+$body = '{"payment_id": 1, "status": "succeeded"}'
+$key = [Text.Encoding]::UTF8.GetBytes('dev-secret')
+$data = [Text.Encoding]::UTF8.GetBytes($body)
+$sig = [BitConverter]::ToString([Security.Cryptography.HMACSHA256]::new($key).ComputeHash($data)).Replace('-', '').ToLower()
+curl.exe -s -X POST http://localhost:8000/webhooks/bank -H 'Content-Type: application/json' -H "X-Signature: $sig" -d $body
+```
+
+### Тела для Swagger
+
+`POST /payments`:
+
+```json
+{
+  "tariff_id": 2,
+  "email": "student@example.com",
+  "method": "installment",
+  "installment_months": 3,
+  "promo_code": "KVITTO10"
+}
+```
+
+`POST /webhooks/bank` — заголовок `X-Signature` это hex-HMAC-SHA256 от того же тела с ключом `WEBHOOK_SECRET` (по умолчанию `dev-secret`):
+
+```json
+{
+  "payment_id": 1,
+  "status": "succeeded"
+}
 ```
 
 ## Структура
